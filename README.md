@@ -15,6 +15,12 @@ This project visualizes blockchain wallet relationships between Fartcoin (💨) 
   - Glowing dual-holder wallets
   - Size scaling based on token amounts
   - Dynamic tooltips with wallet data
+- Flat spiral disc visualization:
+  - 2000 wallet nodes (1000 from each token)
+  - Golden angle-based spiral layout
+  - Color-coded by token type (Blue/Green/White)
+  - Hover tooltips for all nodes
+  - Subtle rotation and floating animations
 
 ## Development
 
