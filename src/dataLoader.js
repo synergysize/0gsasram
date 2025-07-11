@@ -1,4 +1,4 @@
-// dataLoader.js - Load and process wallet data from CSV files using fetch()
+// dataLoader.js - Load and process wallet data from CSV files using fetch().
 
 const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n');
