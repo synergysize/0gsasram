@@ -20,6 +20,12 @@ export function createSpiralDisc(scene, pointTexture) {
   
   // Get the disc data
   const discData = getDiscData();
+  console.log(`Retrieved ${discData.length} wallet data points for spiral disc`);
+  
+  if (discData.length === 0) {
+    console.error("ERROR: No disc data was loaded! The spiral disc will be empty.");
+    console.error("Please check if fartcoin.csv and goattoken.csv are properly loaded.");
+  }
   
   // Create a group for the disc
   discGroup = new THREE.Group();
@@ -42,8 +48,8 @@ export function createSpiralDisc(scene, pointTexture) {
     // Position the sprite
     sprite.position.set(wallet.x, wallet.y, wallet.z);
     
-    // Scale based on amount (smaller than main visualization for performance)
-    const scale = Math.max(100, Math.log(wallet.totalHolding || 1) * 5);
+    // Scale based on amount (increased scale for better visibility)
+    const scale = Math.max(150, Math.log(wallet.totalHolding || 1) * 8);
     sprite.scale.set(scale, scale, 1);
     
     // Add subtle float animation with random phase

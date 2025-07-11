@@ -5,7 +5,8 @@
  * combines them into one list, and prepares them for visualization in a flat spiral disc.
  */
 
-import { initializeData, fartcoinHolders, goatTokenHolders } from './dataLoader.js';
+import dataLoader from './dataLoader.js';
+const { initializeData, fartcoinHolders, goatTokenHolders } = dataLoader;
 
 // Define colors for the disc nodes
 const FARTCOIN_COLOR = 'rgb(0, 0, 255)'; // Blue
@@ -14,8 +15,8 @@ const SHARED_COLOR = 'rgb(255, 255, 255)'; // White for wallets in both lists
 
 // Constants for spiral generation
 const GOLDEN_ANGLE = 137.508 * (Math.PI / 180);
-const BASE_RADIUS = 2500; // Start outside the existing visualization
-const SPREAD = 50; // Controls how quickly the spiral expands
+const BASE_RADIUS = 1000; // Reduced radius to make sure nodes are visible
+const SPREAD = 35; // Controls how quickly the spiral expands
 const Y_JITTER = 2; // Random Y position between -2 and +2
 
 // Load first 1000 wallets from each token
@@ -24,6 +25,7 @@ export function loadDiscWallets() {
   
   // Ensure data is initialized
   initializeData();
+  console.log(`DATA CHECK: Fartcoin holders: ${fartcoinHolders.length}, Goat token holders: ${goatTokenHolders.length}`);
   
   // Take first 1000 wallets from each list
   const fartcoinWallets = fartcoinHolders.slice(0, 1000).map(wallet => ({
@@ -87,6 +89,13 @@ export function loadDiscWallets() {
   
   console.log(`Generated combined disc data with ${processedWallets.length} total wallets`);
   
+  // Log some wallet examples for debugging
+  if (processedWallets.length > 0) {
+    console.log(`Sample wallet from processed list:`, processedWallets[0]);
+  } else {
+    console.error(`ERROR: No wallets were processed for disc visualization!`);
+  }
+
   // Return the combined list
   return processedWallets;
 }

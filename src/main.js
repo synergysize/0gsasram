@@ -82,10 +82,10 @@ let boxCenter = new THREE.Vector3(0, 0, 0);
 
 // Setup raycaster for hover interactions with massively boosted threshold
 const raycaster = new THREE.Raycaster();
-// DEBUG v30: Even more dramatically increase the precision for sprites to ensure we can hit them
-raycaster.params.Sprite = { threshold: 200 }; // Increased from 50 to 200 for extremely forgiving hover detection
-raycaster.params.Points = { threshold: 20 }; // Increase Points threshold too just in case
-console.log('DEBUG v30: Raycaster initialized with extremely high sprite threshold:', raycaster.params.Sprite.threshold);
+// Increase the thresholds even more to ensure we can hit both disc and regular nodes
+raycaster.params.Sprite = { threshold: 300 }; // Increased from 200 to 300 for extremely forgiving hover detection
+raycaster.params.Points = { threshold: 50 }; // Increase Points threshold too for better detection
+console.log('DEBUG v31: Raycaster initialized with extremely high sprite threshold:', raycaster.params.Sprite.threshold);
 const mouse = new THREE.Vector2();
 let hoveredObject = null;
 let hoveredOriginalScale = null;
@@ -1572,7 +1572,7 @@ function animate() {
   allWalletPoints = allWalletPoints.concat(discWalletNodes);
   
   // Log how many disc wallet nodes were added
-  if (frameCounter % 120 === 0 && discWalletNodes.length > 0) {
+  if (frameCounter % 60 === 0) {
     console.log(`Added ${discWalletNodes.length} spiral disc wallet nodes to hover detection`);
   }
   
