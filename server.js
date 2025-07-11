@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 5000;
+const PORT = 3000;
 
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -18,6 +18,7 @@ const MIME_TYPES = {
   '.mp3': 'audio/mpeg',
   '.svg': 'image/svg+xml',
   '.csv': 'text/csv',
+  '.txt': 'text/plain',
   '.pdf': 'application/pdf',
   '.ttf': 'font/ttf',
   '.woff': 'font/woff',
@@ -32,9 +33,12 @@ const server = http.createServer((req, res) => {
     ? path.join(__dirname, 'public', 'index.html')
     : path.join(__dirname, req.url);
     
-  // Special cases for src folder files
-  if (req.url.startsWith('/src/')) {
-    filePath = path.join(__dirname, req.url);
+  // Handle root-level files
+  if (req.url.startsWith('/') && !req.url.startsWith('/public/')) {
+    const fileName = req.url.substring(1); // Remove leading '/'
+    if (fs.existsSync(path.join(__dirname, 'public', fileName))) {
+      filePath = path.join(__dirname, 'public', fileName);
+    }
   }
   
   const extname = String(path.extname(filePath)).toLowerCase();
