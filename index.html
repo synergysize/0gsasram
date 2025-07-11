@@ -3,74 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Blockchain Wallet Visualizer</title>
+  <title>Fractal Wallet Visualization</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background-color: #000;
       font-family: Arial, sans-serif;
-      color: white;
     }
-    .container {
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      cursor: default !important;
+    }
+    
+    #info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      z-index: 10;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    
+    .legend {
+      margin-bottom: 10px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    
+    .color-box {
+      width: 15px;
+      height: 15px;
+      margin-right: 8px;
+      border-radius: 3px;
+    }
+    
+    .fartcoin {
+      background-color: #8A2BE2; /* Purple */
+    }
+    
+    .goattoken {
+      background-color: #FFA500; /* Orange */
+    }
+    
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: white;
+      text-align: center;
+      z-index: 10;
+    }
+    
+    #wallet-tooltip {
+      position: absolute;
+      display: none;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 1000;
+      max-width: 250px;
+      transition: opacity 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 100, 255, 0.5);
+    }
+    .tooltip-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #88ccff;
+    }
+    .tooltip-address {
+      font-family: monospace;
+      font-size: 12px;
+      margin-bottom: 8px;
+      color: #aaccff;
+      word-break: break-all;
+    }
+    .tooltip-holdings {
+      margin-bottom: 5px;
+    }
+    .tooltip-fartcoin {
+      color: #8A2BE2; /* Purple for Fartcoin */
+    }
+    .tooltip-goat {
+      color: #FFA500; /* Orange for Goattoken */
+    }
+    .tooltip-total {
+      margin-top: 8px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    #pause-indicator {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center;
-      max-width: 800px;
-      padding: 20px;
+      font-size: 24px;
+      color: red;
+      display: none;
+      z-index: 100;
     }
-    pre {
-      background: #333;
-      padding: 10px;
-      border-radius: 5px;
-      text-align: left;
-      overflow-x: auto;
-    }
-    a {
-      color: #88ccff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .features {
-      text-align: left;
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(30, 30, 50, 0.5);
-      border-radius: 5px;
-    }
-    .feature-item {
-      margin-bottom: 10px;
+    #contract-address {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: monospace;
+      font-size: 14px;
+      color: white;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>3D Blockchain Wallet Visualizer</h1>
-    <p>Interactive visualization of Fartcoin (💨) and Goat (🐐) token wallet relationships</p>
-
-    <div class="features">
-      <h2>Features:</h2>
-      <div class="feature-item">✅ Interactive 3D visualization with hover tooltips</div>
-      <div class="feature-item">✅ Twinkling starfield with constellations</div>
-      <div class="feature-item">✅ Color-coded wallets:
-        <ul>
-          <li><strong style="color: white;">White</strong>: Wallets holding both Fartcoin and Goat tokens</li>
-          <li><strong style="color: #88ff88;">Green</strong>: Wallets holding only Fartcoin</li>
-          <li><strong style="color: #8888ff;">Blue</strong>: Wallets holding only Goat tokens</li>
-        </ul>
+  <div id="info">
+    <div class="legend">
+      <div class="legend-item">
+        <span class="color-box fartcoin"></span>
+        <span>💨 Wallets</span>
       </div>
-      <div class="feature-item">✅ Glowing white dual-holder wallets on hover</div>
+      <div class="legend-item">
+        <span class="color-box goattoken"></span>
+        <span>🐐 Wallets</span>
+      </div>
     </div>
-
-    <h2>How to Run:</h2>
-    <p>This application needs to be run on a local server due to JavaScript module restrictions.</p>
-    <pre>cd /home/computeruse/.anthropic/sssmerge/merged/
-./run.sh</pre>
-    <p>Then open <a href="http://localhost:3000">http://localhost:3000</a> in your browser.</p>
+    <div id="stats">
+      <div>Total Nodes: <span id="node-count">2000</span></div>
+      <div>💨: <span id="fartcoin-count">1000</span></div>
+      <div>🐐: <span id="goattoken-count">1000</span></div>
+    </div>
   </div>
+
+  <div id="pause-indicator">PAUSED. PRESS ESC TO UNPAUSE</div>
+  
+  <div id="controls">WASD to Move, Mouse to Look<br>ESC to Pause</div>
+  
+  <div id="wallet-tooltip">
+    <div class="tooltip-title">Wallet Details</div>
+    <div class="tooltip-address">0x0000...0000</div>
+    <div class="tooltip-holdings">
+      <div class="tooltip-fartcoin">💨: 0</div>
+      <div class="tooltip-goat">🐐: 0</div>
+    </div>
+    <div class="tooltip-total">Total Value: 0</div>
+  </div>
+  
+  <div id="contract-address">Fractal Wallet Visualization</div>
+  
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.150.1/examples/jsm/controls/OrbitControls.js",
+        "three/examples/jsm/controls/FlyControls.js": "https://unpkg.com/three@0.150.1/examples/jsm/controls/FlyControls.js"
+      }
+    }
+  </script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
