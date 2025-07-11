@@ -1,0 +1,14 @@
+SSS Merged v1.0
+
+This is a merged version combining the best features from:
+- Project 1 (38f735df31e0b60a0ee687e492fd593e07673c8f)
+- Project 2 (afdec771b7303fd7e554738d1cb2a0ee6dd885e1)
+
+Merge completed: July 11, 2025
+
+Features included:
+- Hover tooltip code from Project 1
+- White glowing dual-holder wallet nodes
+- Twinkling starfield effect 
+- Improved emoji representation (💨 and 🐐)
+- Full 3D visualization of wallet relationships
