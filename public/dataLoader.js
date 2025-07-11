@@ -93,8 +93,8 @@ const loadCSVFile = (filePath) => {
 const loadWalletData = () => {
   try {
     // Try to load the full CSV files from the root directory as .txt files
-    let fartcoinCSV = loadCSVFile('/fartcoin.txt');
-    let goatTokenCSV = loadCSVFile('/goattoken.txt');
+    let fartcoinCSV = loadCSVFile('/fartcoin.csv');
+    let goatTokenCSV = loadCSVFile('/goattoken.csv');
     
     // Fall back to embedded data if loading files failed
     if (!fartcoinCSV || !goatTokenCSV) {
