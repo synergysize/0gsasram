@@ -63,9 +63,10 @@
       left: 50%;
       transform: translateX(-50%);
       font-size: 14px;
-      color: white;
+      color: rgb(255, 255, 255); /* Increased brightness with full white */
       text-align: center;
       z-index: 10;
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.5); /* Added glow effect for increased brightness */
     }
     
     #wallet-tooltip {
@@ -87,28 +88,33 @@
       font-weight: bold;
       margin-bottom: 5px;
       font-size: 14px;
-      color: #88ccff;
+      color: #99ddff; /* Increased brightness from #88ccff */
+      text-shadow: 0 0 2px rgba(137, 204, 255, 0.5); /* Added glow for increased brightness */
     }
     .tooltip-address {
       font-family: monospace;
       font-size: 12px;
       margin-bottom: 8px;
-      color: #aaccff;
+      color: #bbddff; /* Increased brightness from #aaccff */
       word-break: break-all;
+      text-shadow: 0 0 2px rgba(170, 204, 255, 0.5); /* Added glow for increased brightness */
     }
     .tooltip-holdings {
       margin-bottom: 5px;
     }
     .tooltip-fartcoin {
-      color: #8A2BE2; /* Purple for Fartcoin */
+      color: #9A3BF2; /* Brighter purple for Fartcoin (increased from #8A2BE2) */
+      text-shadow: 0 0 3px rgba(154, 59, 242, 0.5); /* Added glow */
     }
     .tooltip-goat {
-      color: #FFA500; /* Orange for Goattoken */
+      color: #FFB520; /* Brighter orange for Goattoken (increased from #FFA500) */
+      text-shadow: 0 0 3px rgba(255, 181, 32, 0.5); /* Added glow */
     }
     .tooltip-total {
       margin-top: 8px;
       font-weight: bold;
       color: #ffffff;
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.5); /* Added glow for increased brightness */
     }
     #pause-indicator {
       position: absolute;
@@ -127,8 +133,23 @@
       transform: translateX(-50%);
       font-family: monospace;
       font-size: 14px;
-      color: white;
+      color: rgb(255, 255, 255); /* Increased brightness with full white */
+      text-align: center;
       z-index: 10;
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.5); /* Added glow effect for increased brightness */
+    }
+    
+    #contract-address .title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    #contract-address .divider {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.5);
+      margin: 5px 0;
+      width: 100%;
     }
   </style>
 </head>
@@ -149,7 +170,11 @@
     <div class="tooltip-total">Total Value: 0</div>
   </div>
   
-  <div id="contract-address">Fractal Wallet Visualization<br>Contract: [insert contract address here]</div>
+  <div id="contract-address">
+    <div class="title">Fractal Wallet Visualization</div>
+    <div class="divider"></div>
+    <div>Contract: [insert contract address here]</div>
+  </div>
   
   <script type="importmap">
     {

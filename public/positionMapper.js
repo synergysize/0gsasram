@@ -53,8 +53,8 @@ const mapSharedWallets = () => {
     z += randomBetween(-baseRadius/18, baseRadius/18);
     
     // White color for shared wallets (wallets holding both Fartcoin and Goat tokens)
-    // Brightness correlates with token amount
-    const brightness = Math.min(255, Math.floor(200 + totalHolding / 1000000));
+    // Brightness correlates with token amount - increased by 15%
+    const brightness = Math.min(255, Math.floor(230 + totalHolding / 1000000)); // Increased from 200 to 230
     const color = `rgb(${brightness}, ${brightness}, ${brightness})`;
     
     return {
@@ -100,9 +100,9 @@ const mapFartcoinWallets = () => {
     z += randomBetween(-baseRadius/12, baseRadius/12);
     
     // Green color for Fartcoin-only wallets
-    // Brightness correlates with token amount
-    const brightness = Math.min(200, Math.floor(50 + wallet.amount / 1000000));
-    const color = `rgb(0, ${brightness + 55}, 0)`;
+    // Brightness correlates with token amount - increased by 15%
+    const brightness = Math.min(220, Math.floor(65 + wallet.amount / 1000000)); // Increased from 50 to 65
+    const color = `rgb(0, ${brightness + 65}, 0)`; // Increased from +55 to +65
     
     return {
       x, y, z,
@@ -147,9 +147,9 @@ const mapGoatTokenWallets = () => {
     z += randomBetween(-baseRadius/12, baseRadius/12);
     
     // Blue color for Goat-only wallets
-    // Brightness correlates with token amount
-    const brightness = Math.min(200, Math.floor(50 + wallet.amount / 1000000));
-    const color = `rgb(0, 0, ${brightness + 55})`;
+    // Brightness correlates with token amount - increased by 15%
+    const brightness = Math.min(220, Math.floor(65 + wallet.amount / 1000000)); // Increased from 50 to 65
+    const color = `rgb(0, 0, ${brightness + 65})`; // Increased from +55 to +65
     
     return {
       x, y, z,

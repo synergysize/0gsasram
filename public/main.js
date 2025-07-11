@@ -19,11 +19,12 @@ function createPointTexture() {
   canvas.height = 64;
   
   const context = canvas.getContext('2d');
+  // Increased brightness by 15%
   const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
   gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-  gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.9)');
-  gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.7)');
-  gradient.addColorStop(0.8, 'rgba(255, 255, 255, 0.3)');
+  gradient.addColorStop(0.2, 'rgba(255, 255, 255, 1)');  // Increased from 0.9
+  gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.85)'); // Increased from 0.7
+  gradient.addColorStop(0.8, 'rgba(255, 255, 255, 0.45)'); // Increased from 0.3
   gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
   
   context.fillStyle = gradient;
@@ -228,20 +229,20 @@ function createStarfield() {
     // Vary star colors between white, blue, and light purple
     const colorChoice = Math.random();
     if (colorChoice > 0.7) {
-      // Bluish stars (30%)
-      bgColors[i3] = 0.7 + Math.random() * 0.3; // R
-      bgColors[i3 + 1] = 0.8 + Math.random() * 0.2; // G
+      // Bluish stars (30%) - increased brightness by 15%
+      bgColors[i3] = 0.8 + Math.random() * 0.2; // R (was 0.7 + 0.3)
+      bgColors[i3 + 1] = 0.9 + Math.random() * 0.1; // G (was 0.8 + 0.2)
       bgColors[i3 + 2] = 1.0; // B
     } else if (colorChoice > 0.4) {
-      // Whitish stars (30%)
-      bgColors[i3] = 0.9 + Math.random() * 0.1; // R
-      bgColors[i3 + 1] = 0.9 + Math.random() * 0.1; // G
-      bgColors[i3 + 2] = 0.9 + Math.random() * 0.1; // B
+      // Whitish stars (30%) - increased brightness by 10%
+      bgColors[i3] = 1.0; // R (was 0.9 + 0.1)
+      bgColors[i3 + 1] = 1.0; // G (was 0.9 + 0.1)
+      bgColors[i3 + 2] = 1.0; // B (was 0.9 + 0.1)
     } else {
-      // Purple-ish stars (40%)
-      bgColors[i3] = 0.7 + Math.random() * 0.3; // R
-      bgColors[i3 + 1] = 0.4 + Math.random() * 0.3; // G
-      bgColors[i3 + 2] = 0.9 + Math.random() * 0.1; // B
+      // Purple-ish stars (40%) - increased brightness by 15%
+      bgColors[i3] = 0.8 + Math.random() * 0.2; // R (was 0.7 + 0.3)
+      bgColors[i3 + 1] = 0.5 + Math.random() * 0.3; // G (was 0.4 + 0.3)
+      bgColors[i3 + 2] = 1.0; // B (was 0.9 + 0.1)
     }
   }
   
