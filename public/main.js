@@ -126,6 +126,16 @@ setTimeout(getTooltipElement, 500);
 
 // Track mouse position for raycasting
 function onMouseMove(event) {
+  // If game is paused, only update cursor position but don't process any hover effects
+  if (isPaused) {
+    // Still update tooltip position when paused, but don't process interactions
+    if (tooltip) {
+      tooltip.style.left = (event.clientX + 15) + 'px';
+      tooltip.style.top = (event.clientY + 15) + 'px';
+    }
+    return;
+  }
+  
   // Calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -158,6 +168,9 @@ function onMouseMove(event) {
 
 // Add variables to control rotation when mouse leaves/enters screen and pause state
 let stopRotating = false;
+// Global pause flag to truly halt all updates and animations
+let isPaused = false;
+// For backward compatibility, keeping the paused variable
 let paused = false;
 
 // Mouse enter/leave listeners to stop rotation when cursor leaves window
@@ -176,19 +189,31 @@ canvas.style.cursor = 'default !important';
 // ESC key to toggle pause
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    paused = !paused;
-    console.log('Pause state:', paused ? 'PAUSED' : 'RESUMED');
+    // Toggle both pause flags to ensure all systems respect the pause state
+    isPaused = !isPaused;
+    paused = isPaused;
+    console.log('Pause state:', isPaused ? 'PAUSED' : 'RESUMED');
     
     // Show or hide the pause indicator
     const pauseIndicator = document.getElementById('pause-indicator');
     if (pauseIndicator) {
-      pauseIndicator.style.display = paused ? 'block' : 'none';
+      pauseIndicator.style.display = isPaused ? 'block' : 'none';
+    }
+    
+    // If unpausing, re-request pointer lock and focus as needed
+    if (!isPaused && document.pointerLockElement !== canvas) {
+      if (controlType === 'Fly') {
+        canvas.requestPointerLock();
+      }
     }
   }
 });
 
 // Function for mouse look movement using cursor position (no pointer lock)
 window.addEventListener('mousemove', (e) => {
+  // Check for both isPaused and legacy paused flags to ensure comprehensive pause
+  if (isPaused) return;
+  
   if (controlType === 'Fly' && controls && !stopRotating && !paused) {
     // Use client position based calculation
     const centerX = window.innerWidth / 2;
@@ -1233,6 +1258,14 @@ function animate() {
   requestAnimationFrame(animate);
   
   // Always request animation frame, but only update if not paused
+  // Check isPaused first for comprehensive pause
+  if (isPaused) {
+    // When paused, still render the scene but don't update any game state
+    // This ensures the pause overlay is visible
+    renderer.render(scene, camera);
+    return;
+  }
+  
   if (!paused) {
     const delta = clock.getDelta();
     
@@ -1804,4 +1837,5 @@ function animate() {
   } // End of !paused block
 }
 
+// Start the animation loop
 animate();
