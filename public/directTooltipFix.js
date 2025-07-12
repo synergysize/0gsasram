@@ -56,14 +56,15 @@ export function updateTooltipContent(tooltip, walletData) {
     holdingsType = 'No tokens found';
   }
   
-  // Update tooltip content - without Total Value line
+  // Update tooltip content - simplified as requested
+  let fartcoinDisplay = fartAmount > 0 ? `<div class="tooltip-fartcoin" style="color: #9A3BF2; text-shadow: 0 0 3px rgba(154, 59, 242, 0.7);">💨: ${fartAmountFormatted}</div>` : '';
+  let goatDisplay = goatAmount > 0 ? `<div class="tooltip-goat" style="color: #FFB520; text-shadow: 0 0 3px rgba(255, 181, 32, 0.7);">🐐: ${goatAmountFormatted}</div>` : '';
+  
   tooltip.innerHTML = `
-    <div class="tooltip-title" style="font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #88ccff;">Wallet Details</div>
-    <div class="tooltip-address" style="font-family: monospace; font-size: 12px; margin-bottom: 8px; color: #aaccff; word-break: break-all;">${shortAddress}</div>
-    <div class="tooltip-type" style="margin-bottom: 5px; color: #ffcc88;">${holdingsType}</div>
+    <div class="tooltip-address" style="font-family: monospace; font-size: 12px; margin-bottom: 8px; color: #bbddff; word-break: break-all; text-shadow: 0 0 2px rgba(170, 204, 255, 0.7);">${shortAddress}</div>
     <div class="tooltip-holdings" style="margin-bottom: 5px;">
-      <div class="tooltip-fartcoin" style="color: #88ff88;">💨: ${fartAmountFormatted}</div>
-      <div class="tooltip-goat" style="color: #8888ff;">🐐: ${goatAmountFormatted}</div>
+      ${fartcoinDisplay}
+      ${goatDisplay}
     </div>
   `;
   
@@ -127,14 +128,12 @@ export function createTooltipIfMissing() {
     tooltip.style.border = '2px solid rgba(100, 200, 255, 0.8)';
     tooltip.style.boxShadow = '0 0 15px rgba(0, 100, 255, 0.7)';
     
-    // Create tooltip content - without Total Value line
+    // Create simplified tooltip content
     tooltip.innerHTML = `
-      <div class="tooltip-title" style="font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #88ccff;">Wallet Details</div>
-      <div class="tooltip-address" style="font-family: monospace; font-size: 12px; margin-bottom: 8px; color: #aaccff; word-break: break-all;">0x0000...0000</div>
-      <div class="tooltip-type" style="margin-bottom: 5px; color: #ffcc88;">Loading...</div>
+      <div class="tooltip-address" style="font-family: monospace; font-size: 12px; margin-bottom: 8px; color: #bbddff; word-break: break-all; text-shadow: 0 0 2px rgba(170, 204, 255, 0.7);">0x0000...0000</div>
       <div class="tooltip-holdings" style="margin-bottom: 5px;">
-        <div class="tooltip-fartcoin" style="color: #88ff88;">Fartcoin: 0</div>
-        <div class="tooltip-goat" style="color: #8888ff;">Goatcoin: 0</div>
+        <div class="tooltip-fartcoin" style="color: #9A3BF2; text-shadow: 0 0 3px rgba(154, 59, 242, 0.7);">💨: 0</div>
+        <div class="tooltip-goat" style="color: #FFB520; text-shadow: 0 0 3px rgba(255, 181, 32, 0.7);">🐐: 0</div>
       </div>
     `;
     

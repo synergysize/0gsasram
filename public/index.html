@@ -151,6 +151,45 @@
       margin: 5px 0;
       width: 100%;
     }
+    
+    /* Fuel meter styles */
+    #fuel-meter-container {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      text-align: center;
+      width: 200px;
+    }
+    
+    #fuel-meter-label {
+      color: rgb(255, 255, 255);
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-shadow: 0 0 5px rgba(0, 150, 255, 0.8);
+      letter-spacing: 2px;
+    }
+    
+    #fuel-meter-outer {
+      width: 100%;
+      height: 15px;
+      background-color: rgba(0, 20, 40, 0.8);
+      border: 2px solid rgba(100, 200, 255, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    
+    #fuel-meter-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgb(0, 100, 255), rgb(50, 200, 255));
+      border-radius: 4px;
+      transition: width 0.1s ease-out;
+      box-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
+    }
   </style>
 </head>
 <body>
@@ -158,16 +197,21 @@
 
   <div id="pause-indicator">PAUSED. PRESS ESC TO UNPAUSE</div>
   
-  <div id="controls">WASD to Move, Mouse to Look<br>ESC to Pause</div>
+  <div id="controls">WASD to Move, Mouse to Look, SHIFT to Boost<br>ESC to Pause</div>
+  
+  <div id="fuel-meter-container">
+    <div id="fuel-meter-label">JETPACK FUEL</div>
+    <div id="fuel-meter-outer">
+      <div id="fuel-meter-inner"></div>
+    </div>
+  </div>
   
   <div id="wallet-tooltip">
-    <div class="tooltip-title">Wallet Details</div>
     <div class="tooltip-address">0x0000...0000</div>
     <div class="tooltip-holdings">
       <div class="tooltip-fartcoin">💨: 0</div>
       <div class="tooltip-goat">🐐: 0</div>
     </div>
-    <div class="tooltip-total">Total Value: 0</div>
   </div>
   
   <div id="contract-address">

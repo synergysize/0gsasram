@@ -50,22 +50,16 @@ class WalletTooltip {
     context.fill();
     context.stroke();
     
-    // Add title text
-    context.fillStyle = '#88ccff';
-    context.font = 'bold 24px Arial';
-    context.fillText('Wallet Details', 30, 40);
-    
-    // Add placeholder text
-    context.fillStyle = '#ffffff';
+    // Add placeholder text - simplified version
+    context.fillStyle = '#bbddff';
     context.font = '16px Monospace';
-    context.fillText('Address: 0x000...000', 30, 80);
-    context.fillStyle = '#88ff88';
-    context.fillText('💨: 0', 30, 110);
-    context.fillStyle = '#8888ff';
-    context.fillText('🐐: 0', 30, 140);
-    context.fillStyle = '#ffffff';
-    context.font = 'bold 16px Arial';
-    context.fillText('Total Value: 0', 30, 180);
+    context.fillText('Address: 0x000...000', 30, 40);
+    
+    // Only show tokens if value > 0
+    context.fillStyle = '#9A3BF2';
+    context.fillText('💨: 0', 30, 80);
+    context.fillStyle = '#FFB520';
+    context.fillText('🐐: 0', 30, 120);
     
     // Create texture
     const texture = new THREE.CanvasTexture(canvas);
@@ -95,11 +89,6 @@ class WalletTooltip {
     context.fill();
     context.stroke();
     
-    // Add title text
-    context.fillStyle = '#88ccff';
-    context.font = 'bold 24px Arial';
-    context.fillText('Wallet Details', 30, 40);
-    
     // Format address
     const address = walletData.address;
     const shortAddress = address.length > 12 
@@ -115,21 +104,24 @@ class WalletTooltip {
       maximumFractionDigits: 2
     });
     
-    const totalAmountFormatted = (walletData.fartAmount + walletData.goatAmount).toLocaleString(undefined, {
-      maximumFractionDigits: 2
-    });
-    
-    // Add wallet data
-    context.fillStyle = '#aaccff';
+    // Add wallet data - simplified
+    context.fillStyle = '#bbddff';
     context.font = '16px Monospace';
-    context.fillText(`Address: ${shortAddress}`, 30, 80);
-    context.fillStyle = '#88ff88';
-    context.fillText(`💨: ${fartAmountFormatted}`, 30, 110);
-    context.fillStyle = '#8888ff';
-    context.fillText(`🐐: ${goatAmountFormatted}`, 30, 140);
-    context.fillStyle = '#ffffff';
-    context.font = 'bold 16px Arial';
-    context.fillText(`Total Value: ${totalAmountFormatted}`, 30, 180);
+    context.fillText(`Address: ${shortAddress}`, 30, 40);
+    
+    // Only show fartcoin if value > 0
+    let yPos = 80;
+    if (walletData.fartAmount > 0) {
+      context.fillStyle = '#9A3BF2';
+      context.fillText(`💨: ${fartAmountFormatted}`, 30, yPos);
+      yPos += 40;
+    }
+    
+    // Only show goat token if value > 0
+    if (walletData.goatAmount > 0) {
+      context.fillStyle = '#FFB520';
+      context.fillText(`🐐: ${goatAmountFormatted}`, 30, yPos);
+    }
     
     // Update texture
     this.tooltipMaterial.map.needsUpdate = true;

@@ -8,6 +8,7 @@ import WalletTooltip from './walletTooltip.js';
 import directTooltipFix, { createTooltipIfMissing, showTooltip, hideTooltip, updateTooltipContent } from './directTooltipFix.js';
 import { initFireworks, updateFireworks } from './fireworks.js';
 import { createSpiralDisc, updateDisc, getDiscWalletNodes } from './spiralDisc.js';
+import JetpackManager from './jetpackManager.js';
 
 // V31 - Added emojis, enhanced starfield, and constellations
 console.log("Starting 3D Blockchain Visualizer v31 with 💨 and 🐐 tokens");
@@ -57,7 +58,8 @@ document.body.appendChild(renderer.domElement);
 scene.background = new THREE.Color(0x000815);
 
 // Add strong lighting for better visibility
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+// Increased ambient light intensity by 20%
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
 scene.add(ambientLight);
 
 // Add version display in top-right corner
@@ -72,7 +74,8 @@ versionDisplay.style.fontFamily = 'Arial, sans-serif';
 versionDisplay.innerHTML = 'v31';
 document.body.appendChild(versionDisplay);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+// Increased directional light intensity by 20%
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
 directionalLight.position.set(1, 1, 1).normalize();
 scene.add(directionalLight);
 
@@ -845,8 +848,8 @@ try {
     controls.damping = 0.2; // Reduced damping for smoother inertia (was 0.5)
     controls.gravity = 0.5; // Half gravity for floating effect
     
-    // Jetpack fuel system
-    controls.jetpackFuel = 250; // Full tank = 250 units (2.5x the original 100)
+    // Initialize the jetpack manager
+    window.jetpackManager = new JetpackManager(camera, controls);
     controls.jetpackMaxFuel = 250; // 2.5x the original maximum
     controls.jetpackActive = false;
     controls.jetpackEnabled = true; // Enabled when fuel > 0
@@ -1238,6 +1241,11 @@ function animate() {
     
     // Update 3D tooltip position
     walletTooltip.update();
+    
+    // Update jetpack fuel meter
+    if (window.jetpackManager) {
+      window.jetpackManager.update(delta);
+    }
   
   // Handle hover animation for better visibility
   if (hoveredObject && hoveredObject.userData.pulseAnimation) {
@@ -1248,8 +1256,8 @@ function animate() {
     
     // Also pulse the brightness with more extreme values and different color
     if (hoveredObject.material) {
-      // Use bright yellow/white for maximum visibility
-      const pulseIntensity = 1.5 + Math.sin(hoveredObject.userData.pulseTime * 8) * 0.5;
+      // Use bright yellow/white for maximum visibility - increased brightness by 20%
+      const pulseIntensity = 1.8 + Math.sin(hoveredObject.userData.pulseTime * 8) * 0.6;
       hoveredObject.material.color.setRGB(
         1.0, // Always full red
         1.0, // Always full green
