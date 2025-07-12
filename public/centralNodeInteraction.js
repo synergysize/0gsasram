@@ -1,6 +1,4 @@
 // Fixed Central Node Interaction
-import * as THREE from 'three';
-
 class CentralNodeInteraction {
   constructor(scene, camera) {
     this.scene = scene;
@@ -218,9 +216,66 @@ class CentralNodeInteraction {
     this.isWithinRange = distance <= 50;
     
     // Check if facing the node (more lenient)
-    const cameraDirection = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
-    const toNodeDirection = nodePosition.sub(playerPosition).normalize();
-    const dotProduct = cameraDirection.dot(toNodeDirection);
+    // Use camera's quaternion to determine forward direction
+    // This code creates a forward vector without directly using THREE.Vector3
+    const forward = { x: 0, y: 0, z: -1 };
+    
+    // Apply camera quaternion to get camera direction
+    const quat = this.camera.quaternion;
+    const x = forward.x;
+    const y = forward.y;
+    const z = forward.z;
+    
+    // Manual quaternion multiplication 
+    const qx = quat.x;
+    const qy = quat.y;
+    const qz = quat.z;
+    const qw = quat.w;
+    
+    // Calculate direction vector using quaternion multiplication
+    const ix = qw * x + qy * z - qz * y;
+    const iy = qw * y + qz * x - qx * z;
+    const iz = qw * z + qx * y - qy * x;
+    const iw = -qx * x - qy * y - qz * z;
+    
+    const cameraDirection = {
+      x: ix * qw + iw * -qx + iy * -qz - iz * -qy,
+      y: iy * qw + iw * -qy + iz * -qx - ix * -qz,
+      z: iz * qw + iw * -qz + ix * -qy - iy * -qx
+    };
+    
+    // Normalize camera direction
+    const magSq = cameraDirection.x * cameraDirection.x + 
+                  cameraDirection.y * cameraDirection.y + 
+                  cameraDirection.z * cameraDirection.z;
+    const mag = Math.sqrt(magSq);
+    
+    cameraDirection.x /= mag;
+    cameraDirection.y /= mag;
+    cameraDirection.z /= mag;
+    
+    // Calculate direction to node
+    const toNodeDirection = {
+      x: nodePosition.x - playerPosition.x,
+      y: nodePosition.y - playerPosition.y, 
+      z: nodePosition.z - playerPosition.z
+    };
+    
+    // Normalize direction to node
+    const nodeDistSq = toNodeDirection.x * toNodeDirection.x + 
+                      toNodeDirection.y * toNodeDirection.y + 
+                      toNodeDirection.z * toNodeDirection.z;
+    const nodeDist = Math.sqrt(nodeDistSq);
+    
+    toNodeDirection.x /= nodeDist;
+    toNodeDirection.y /= nodeDist;
+    toNodeDirection.z /= nodeDist;
+    
+    // Calculate dot product
+    const dotProduct = cameraDirection.x * toNodeDirection.x + 
+                      cameraDirection.y * toNodeDirection.y + 
+                      cameraDirection.z * toNodeDirection.z;
+                      
     this.isFacingNode = dotProduct > 0.5; // More lenient than 0.7
     
     // Show/hide prompt
