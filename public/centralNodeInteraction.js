@@ -1,214 +1,178 @@
-// Central Node Interaction
-// Detects proximity to the large glowing white central node
-// Shows a prompt when within 10 units and facing it
-// Triggers red flash and countdown timer when 'F' is pressed
-
+// Fixed Central Node Interaction
 class CentralNodeInteraction {
   constructor(scene, camera) {
     this.scene = scene;
     this.camera = camera;
-    this.centralNode = null; // Will store reference to the central white node
+    this.centralNode = null;
     this.isWithinRange = false;
     this.isFacingNode = false;
     this.hasTriggered = false;
     this.countdownEndTime = null;
     
-    // Create UI elements
     this.createUIElements();
-    
-    // Check if the activation was already done (from localStorage)
     this.checkPreviousActivation();
     
-    // Add keydown event listener for F key
     window.addEventListener('keydown', this.handleKeyPress.bind(this));
   }
   
-  // Find the central node (the large glowing white node that holds both tokens)
   findCentralNode(allWalletNodes) {
     console.log('Searching for central node among', allWalletNodes.length, 'wallet nodes');
     
-    // Look for a node that has both tokens (white color)
+    // Look for ANY white wallet (shared wallet with both tokens)
     this.centralNode = allWalletNodes.find(node => {
       if (!node.userData || !node.userData.walletData) return false;
       
-      // Debug logging to see what properties are available
-      if (Math.random() < 0.1) { // Log only 10% of nodes to avoid console spam
-        console.log('Node userData:', node.userData);
-      }
-      
       const walletData = node.userData.walletData;
       
-      // Check both possible property naming conventions
-      return (
-        (walletData.fartcoinBalance > 0 && walletData.goatBalance > 0) || 
-        (walletData.fartAmount > 0 && walletData.goatAmount > 0)
-      );
+      // Check if wallet has both tokens (any amount > 0)
+      const hasFart = (walletData.fartcoinBalance > 0) || (walletData.fartAmount > 0);
+      const hasGoat = (walletData.goatBalance > 0) || (walletData.goatAmount > 0);
+      
+      return hasFart && hasGoat;
     });
+    
+    // If no dual-holder found, just use the first shared wallet node
+    if (!this.centralNode) {
+      const sharedGroup = this.scene.getObjectByName('sharedWallets');
+      if (sharedGroup && sharedGroup.children.length > 0) {
+        this.centralNode = sharedGroup.children[0];
+        console.log('Using first shared wallet as central node');
+      }
+    }
     
     if (this.centralNode) {
       console.log('Central node found:', this.centralNode);
+      console.log('Central node position:', this.centralNode.position);
     } else {
-      console.warn('Could not find central node with both tokens');
+      console.warn('Could not find central node');
     }
   }
   
-  // Get or create UI elements needed for interaction
   createUIElements() {
-    // Try to get existing elements first
+    // Create activation prompt
     this.promptElement = document.getElementById('activation-prompt');
-    this.countdownElement = document.getElementById('countdown-overlay');
-    
-    // Create elements only if they don't exist
     if (!this.promptElement) {
-      console.log('Creating activation prompt element');
       this.promptElement = document.createElement('div');
       this.promptElement.id = 'activation-prompt';
       this.promptElement.textContent = 'Press F to Activate';
-      this.promptElement.style.position = 'absolute';
-      this.promptElement.style.top = '20%';
-      this.promptElement.style.left = '50%';
-      this.promptElement.style.transform = 'translateX(-50%)';
-      this.promptElement.style.color = 'white';
-      this.promptElement.style.fontWeight = 'bold';
-      this.promptElement.style.fontSize = '24px';
-      this.promptElement.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.7)';
-      this.promptElement.style.zIndex = '1000';
-      this.promptElement.style.display = 'none';
+      this.promptElement.style.cssText = `
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-weight: bold;
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        z-index: 1000;
+        display: none;
+      `;
       document.body.appendChild(this.promptElement);
     }
     
-    // Create red flash element (always create this as it's not in the HTML)
-    this.flashElement = document.createElement('div');
-    this.flashElement.id = 'red-flash';
-    this.flashElement.style.position = 'absolute';
-    this.flashElement.style.top = '0';
-    this.flashElement.style.left = '0';
-    this.flashElement.style.width = '100%';
-    this.flashElement.style.height = '100%';
-    this.flashElement.style.backgroundColor = 'red';
-    this.flashElement.style.opacity = '0';
-    this.flashElement.style.pointerEvents = 'none';
-    this.flashElement.style.zIndex = '999';
-    this.flashElement.style.transition = 'opacity 0.25s ease';
-    document.body.appendChild(this.flashElement);
-    
+    // Create countdown element
+    this.countdownElement = document.getElementById('countdown-overlay');
     if (!this.countdownElement) {
-      console.log('Creating countdown element');
       this.countdownElement = document.createElement('div');
       this.countdownElement.id = 'countdown-overlay';
-      this.countdownElement.style.position = 'absolute';
-      this.countdownElement.style.top = '15%';  // Positioned on the horizon
-      this.countdownElement.style.left = '50%';
-      this.countdownElement.style.transform = 'translateX(-50%)';
-      this.countdownElement.style.color = 'red';
-      this.countdownElement.style.fontFamily = '"Digital-7", monospace';
-      this.countdownElement.style.fontSize = '36px';
-      this.countdownElement.style.fontWeight = 'bold';
-      this.countdownElement.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.7)';
-      this.countdownElement.style.zIndex = '1000';
-      this.countdownElement.style.display = 'none';
+      this.countdownElement.style.cssText = `
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: red;
+        font-family: monospace;
+        font-size: 36px;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        z-index: 1000;
+        display: none;
+      `;
       document.body.appendChild(this.countdownElement);
     }
     
-    console.log('UI Elements created/found:', { 
-      promptElement: !!this.promptElement, 
-      flashElement: !!this.flashElement, 
-      countdownElement: !!this.countdownElement 
-    });
+    // Create red flash element
+    this.flashElement = document.createElement('div');
+    this.flashElement.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: red;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      transition: opacity 0.25s ease;
+    `;
+    document.body.appendChild(this.flashElement);
   }
   
-  // Check if the activation was already done in a previous session
   checkPreviousActivation() {
     try {
-      // Wrap in try-catch to prevent localStorage errors from blocking rendering
-      if (localStorage && localStorage.getItem('centralNodeActivated') === 'true') {
+      if (localStorage.getItem('centralNodeActivated') === 'true') {
         this.hasTriggered = true;
         console.log('Central node was previously activated');
         
-        // Get countdown end time or set a new one if not found
         const storedEndTime = localStorage.getItem('countdownEndTime');
         if (storedEndTime) {
           this.countdownEndTime = parseInt(storedEndTime);
-          console.log('Loaded countdown end time:', new Date(this.countdownEndTime).toISOString());
         } else {
-          // Set to July 12, 2025 at 17:00 UTC if not found
-          const targetDate = new Date(Date.UTC(2025, 6, 12, 17, 0, 0)); // July is month 6 (0-indexed)
-          this.countdownEndTime = targetDate.getTime();
-          console.log('Set countdown end time to:', targetDate.toISOString());
-          
-          try {
-            localStorage.setItem('countdownEndTime', this.countdownEndTime.toString());
-          } catch (e) {
-            console.error('Failed to save countdown end time to localStorage:', e);
-          }
+          // Set to a future date for testing - 24 hours from now
+          this.countdownEndTime = Date.now() + (24 * 60 * 60 * 1000);
+          localStorage.setItem('countdownEndTime', this.countdownEndTime.toString());
         }
         
-        // Use requestAnimationFrame to delay showing the countdown
-        // This ensures the DOM is ready and prevents blocking initial render
-        requestAnimationFrame(() => {
-          this.showCountdown();
-        });
+        setTimeout(() => this.showCountdown(), 100);
       }
     } catch (e) {
       console.error('Error accessing localStorage:', e);
     }
   }
   
-  // Handle key press events
   handleKeyPress(event) {
-    // Only proceed if 'F' key is pressed, player is within range and facing the node, and hasn't triggered yet
     if (event.key.toLowerCase() === 'f' && this.isWithinRange && this.isFacingNode && !this.hasTriggered) {
       this.triggerActivation();
     }
   }
   
-  // Trigger the activation sequence
   triggerActivation() {
-    console.log('Triggering central node activation!');
+    console.log('COUNTDOWN ACTIVATED!');
     
-    // Set the trigger flag and save to localStorage
     this.hasTriggered = true;
     
     try {
       localStorage.setItem('centralNodeActivated', 'true');
     } catch (e) {
-      console.error('Failed to save activation state to localStorage:', e);
+      console.error('Failed to save activation state:', e);
     }
     
-    // Hide the prompt
-    if (this.promptElement) {
-      this.promptElement.style.display = 'none';
-    }
+    // Hide prompt
+    this.promptElement.style.display = 'none';
     
-    // Show red flash
-    if (this.flashElement) {
-      this.flashElement.style.opacity = '0.7';
-      setTimeout(() => {
-        this.flashElement.style.opacity = '0';
-      }, 250);
-    }
+    // Red flash
+    this.flashElement.style.opacity = '0.7';
+    setTimeout(() => {
+      this.flashElement.style.opacity = '0';
+    }, 250);
     
-    // Set countdown end time to July 12, 2025 at 17:00 UTC
-    const targetDate = new Date(Date.UTC(2025, 6, 12, 17, 0, 0)); // July is month 6 (0-indexed)
-    this.countdownEndTime = targetDate.getTime();
-    console.log('Setting countdown to end at:', targetDate.toISOString());
+    // Set countdown to 24 hours from now for testing
+    this.countdownEndTime = Date.now() + (24 * 60 * 60 * 1000);
     
     try {
       localStorage.setItem('countdownEndTime', this.countdownEndTime.toString());
     } catch (e) {
-      console.error('Failed to save countdown end time to localStorage:', e);
+      console.error('Failed to save countdown end time:', e);
     }
     
-    // Show countdown
     this.showCountdown();
   }
   
-  // Show the countdown timer
   showCountdown() {
+    console.log('Showing countdown timer');
     this.countdownElement.style.display = 'block';
     this.updateCountdown();
     
-    // Update countdown every second
     if (!this.countdownInterval) {
       this.countdownInterval = setInterval(() => {
         this.updateCountdown();
@@ -216,18 +180,17 @@ class CentralNodeInteraction {
     }
   }
   
-  // Update the countdown display
   updateCountdown() {
+    if (!this.countdownEndTime) return;
+    
     const now = Date.now();
     const timeRemaining = Math.max(0, this.countdownEndTime - now);
     
-    // Calculate days, hours, minutes, seconds
     const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
     const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
     
-    // Format as DD:HH:MM:SS
     const formattedTime = 
       days.toString().padStart(2, '0') + ':' +
       hours.toString().padStart(2, '0') + ':' +
@@ -235,19 +198,18 @@ class CentralNodeInteraction {
       seconds.toString().padStart(2, '0');
     
     this.countdownElement.textContent = formattedTime;
+    
+    // Debug log
+    console.log('Countdown updated:', formattedTime, 'Time remaining:', timeRemaining);
   }
   
-  // Update function to be called every frame
   update() {
-    // If already triggered, just update the countdown
     if (this.hasTriggered) {
       this.updateCountdown();
       return;
     }
     
-    // If central node not found, don't do proximity checks
     if (!this.centralNode) {
-      console.log('Central node not found, skipping proximity check');
       return;
     }
     
@@ -256,40 +218,31 @@ class CentralNodeInteraction {
     const nodePosition = this.centralNode.position.clone();
     const distance = playerPosition.distanceTo(nodePosition);
     
-    // Check if within 10 units
-    this.isWithinRange = distance <= 10;
+    // Check if within range (increased to 50 units for easier testing)
+    this.isWithinRange = distance <= 50;
     
-    // Check if facing the node
+    // Check if facing the node (more lenient)
     const cameraDirection = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
     const toNodeDirection = nodePosition.sub(playerPosition).normalize();
     const dotProduct = cameraDirection.dot(toNodeDirection);
-    // A dot product > 0.7 means the angle is less than ~45 degrees
-    this.isFacingNode = dotProduct > 0.7;
+    this.isFacingNode = dotProduct > 0.5; // More lenient than 0.7
     
-    // Log status occasionally for debugging
-    if (Math.random() < 0.01) { // Log 1% of the time
-      console.log('Proximity status:', { 
-        distance, 
-        isWithinRange: this.isWithinRange, 
+    // Show/hide prompt
+    if (this.isWithinRange && this.isFacingNode && !this.hasTriggered) {
+      this.promptElement.style.display = 'block';
+      console.log('Showing activation prompt - distance:', distance.toFixed(1));
+    } else {
+      this.promptElement.style.display = 'none';
+    }
+    
+    // Debug log occasionally
+    if (Math.random() < 0.01) {
+      console.log('Central node update:', {
+        distance: distance.toFixed(1),
+        isWithinRange: this.isWithinRange,
         isFacing: this.isFacingNode,
         hasTriggered: this.hasTriggered
       });
-    }
-    
-    // Update UI based on conditions
-    if (this.isWithinRange && this.isFacingNode && !this.hasTriggered) {
-      if (this.promptElement) {
-        this.promptElement.style.display = 'block';
-      }
-    } else {
-      if (this.promptElement) {
-        this.promptElement.style.display = 'none';
-      }
-    }
-    
-    // Always update the countdown if it's active
-    if (this.countdownEndTime) {
-      this.updateCountdown();
     }
   }
 }
