@@ -9,6 +9,7 @@ import directTooltipFix, { createTooltipIfMissing, showTooltip, hideTooltip, upd
 import { initFireworks, updateFireworks } from './fireworks.js';
 import { createSpiralDisc, updateDisc, getDiscWalletNodes } from './spiralDisc.js';
 import JetpackManager from './jetpackManager.js';
+import CentralNodeInteraction from './centralNodeInteraction.js';
 
 // V31 - Added emojis, enhanced starfield, and constellations
 console.log("Starting 3D Blockchain Visualizer v31 with 💨 and 🐐 tokens");
@@ -61,6 +62,9 @@ scene.background = new THREE.Color(0x000815);
 // Increased ambient light intensity by 20%
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
 scene.add(ambientLight);
+
+// Global variable for central node interaction
+let centralNodeInteraction = null;
 
 // Add version display in top-right corner
 const versionDisplay = document.createElement('div');
@@ -1117,6 +1121,20 @@ if (sharedPoints.length > 0 && fartcoinPoints.length > 0 && goatTokenPoints.leng
   console.log('Creating spiral disc visualization around the main visualization...');
   const spiralDisc = createSpiralDisc(scene, pointTexture);
   
+  // Create an array of all wallet nodes (white dual-holder nodes are in sharedGroups)
+  const allWalletNodes = [];
+  if (sharedGroups && sharedGroups.mainGroup) {
+    sharedGroups.mainGroup.children.forEach(node => {
+      if (node.userData && node.userData.isLevel1Wallet) {
+        allWalletNodes.push(node);
+      }
+    });
+  }
+  
+  // Initialize central node interaction with access to camera and scene
+  centralNodeInteraction = new CentralNodeInteraction(scene, camera);
+  centralNodeInteraction.findCentralNode(allWalletNodes);
+  
   // Extract main groups for bounding box calculation
   const sharedGroup = sharedGroups.mainGroup;
   const fartcoinGroup = fartcoinGroups.mainGroup;
@@ -1274,6 +1292,11 @@ function animate() {
     
     // Update 3D tooltip position
     walletTooltip.update();
+    
+    // Update central node interaction
+    if (centralNodeInteraction) {
+      centralNodeInteraction.update();
+    }
     
     // Update jetpack fuel meter
     if (window.jetpackManager) {
