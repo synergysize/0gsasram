@@ -1,4 +1,6 @@
 // Fixed Central Node Interaction
+import * as THREE from 'three';
+
 class CentralNodeInteraction {
   constructor(scene, camera) {
     this.scene = scene;
