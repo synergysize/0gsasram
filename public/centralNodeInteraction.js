@@ -55,18 +55,16 @@ class CentralNodeInteraction {
       this.promptElement = document.createElement('div');
       this.promptElement.id = 'activation-prompt';
       this.promptElement.textContent = 'Press F to Activate';
-      this.promptElement.style.cssText = `
-        position: absolute;
-        top: 20%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        font-weight: bold;
-        font-size: 24px;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-        z-index: 1000;
-        display: none;
-      `;
+      this.promptElement.style.position = 'absolute';
+      this.promptElement.style.top = '20%';
+      this.promptElement.style.left = '50%';
+      this.promptElement.style.transform = 'translateX(-50%)';
+      this.promptElement.style.color = 'white';
+      this.promptElement.style.fontWeight = 'bold';
+      this.promptElement.style.fontSize = '24px';
+      this.promptElement.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.7)';
+      this.promptElement.style.zIndex = '1000';
+      this.promptElement.style.display = 'none';
       document.body.appendChild(this.promptElement);
     }
     
@@ -75,36 +73,32 @@ class CentralNodeInteraction {
     if (!this.countdownElement) {
       this.countdownElement = document.createElement('div');
       this.countdownElement.id = 'countdown-overlay';
-      this.countdownElement.style.cssText = `
-        position: absolute;
-        top: 15%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: red;
-        font-family: monospace;
-        font-size: 36px;
-        font-weight: bold;
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-        z-index: 1000;
-        display: none;
-      `;
+      this.countdownElement.style.position = 'absolute';
+      this.countdownElement.style.top = '15%';
+      this.countdownElement.style.left = '50%';
+      this.countdownElement.style.transform = 'translateX(-50%)';
+      this.countdownElement.style.color = 'red';
+      this.countdownElement.style.fontFamily = 'monospace';
+      this.countdownElement.style.fontSize = '36px';
+      this.countdownElement.style.fontWeight = 'bold';
+      this.countdownElement.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.7)';
+      this.countdownElement.style.zIndex = '1000';
+      this.countdownElement.style.display = 'none';
       document.body.appendChild(this.countdownElement);
     }
     
     // Create red flash element
     this.flashElement = document.createElement('div');
-    this.flashElement.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: red;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 999;
-      transition: opacity 0.25s ease;
-    `;
+    this.flashElement.style.position = 'absolute';
+    this.flashElement.style.top = '0';
+    this.flashElement.style.left = '0';
+    this.flashElement.style.width = '100%';
+    this.flashElement.style.height = '100%';
+    this.flashElement.style.backgroundColor = 'red';
+    this.flashElement.style.opacity = '0';
+    this.flashElement.style.pointerEvents = 'none';
+    this.flashElement.style.zIndex = '999';
+    this.flashElement.style.transition = 'opacity 0.25s ease';
     document.body.appendChild(this.flashElement);
   }
   
