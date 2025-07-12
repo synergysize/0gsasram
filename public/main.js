@@ -1121,15 +1121,43 @@ if (sharedPoints.length > 0 && fartcoinPoints.length > 0 && goatTokenPoints.leng
   console.log('Creating spiral disc visualization around the main visualization...');
   const spiralDisc = createSpiralDisc(scene, pointTexture);
   
-  // Create an array of all wallet nodes (white dual-holder nodes are in sharedGroups)
+  // Create an array of all wallet nodes (including all types for more thorough search)
   const allWalletNodes = [];
+  
+  // Add shared wallet nodes (white nodes with both tokens)
   if (sharedGroups && sharedGroups.mainGroup) {
+    console.log('Adding shared wallet nodes to search list:', sharedGroups.mainGroup.children.length);
     sharedGroups.mainGroup.children.forEach(node => {
+      if (node.userData && node.userData.isLevel1Wallet) {
+        allWalletNodes.push(node);
+        // Log a sample of the wallet data for debugging
+        if (Math.random() < 0.1) { // Log only 10% of nodes
+          console.log('Sample shared wallet data:', node.userData.walletData);
+        }
+      }
+    });
+  }
+  
+  // Also add fartcoin and goat token wallet nodes as they might have both tokens
+  if (fartcoinGroups && fartcoinGroups.mainGroup) {
+    console.log('Adding fartcoin wallet nodes to search list:', fartcoinGroups.mainGroup.children.length);
+    fartcoinGroups.mainGroup.children.forEach(node => {
       if (node.userData && node.userData.isLevel1Wallet) {
         allWalletNodes.push(node);
       }
     });
   }
+  
+  if (goatTokenGroups && goatTokenGroups.mainGroup) {
+    console.log('Adding goat token wallet nodes to search list:', goatTokenGroups.mainGroup.children.length);
+    goatTokenGroups.mainGroup.children.forEach(node => {
+      if (node.userData && node.userData.isLevel1Wallet) {
+        allWalletNodes.push(node);
+      }
+    });
+  }
+  
+  console.log('Total wallet nodes for central node search:', allWalletNodes.length);
   
   // Initialize central node interaction with access to camera and scene
   centralNodeInteraction = new CentralNodeInteraction(scene, camera);

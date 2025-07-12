@@ -205,7 +205,11 @@
 
   <div id="pause-indicator">PAUSED. PRESS ESC TO UNPAUSE</div>
   
-  <div id="controls">WASD to Move, Mouse to Look, SHIFT to Boost<br>ESC to Pause</div>
+  <div id="controls">WASD to Move, Mouse to Look, SHIFT to Boost<br>ESC to Pause<br>Press F near central white node to activate</div>
+  
+  <!-- Elements for central node interaction -->
+  <div id="activation-prompt" style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 24px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); z-index: 1000; display: none;">Press F to Activate</div>
+  <div id="countdown-overlay" style="position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-family: 'Digital-7', monospace; font-size: 36px; font-weight: bold; color: red; text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); z-index: 1000; display: none;">00:00:00:00</div>
   
   <div id="fuel-meter-container">
     <div id="fuel-meter-label">JETPACK FUEL</div>
@@ -237,6 +241,6 @@
       }
     }
   </script>
-  <script type="module" src="/main.js"></script>
+  <script type="module" src="./main.js"></script>
 </body>
 </html>

@@ -21,6 +21,11 @@ This project visualizes blockchain wallet relationships between Fartcoin (💨) 
   - Color-coded by token type (Blue/Green/White)
   - Hover tooltips for all nodes
   - Subtle rotation and floating animations
+- Central Node Interaction:
+  - "Press F to Activate" prompt when near the central white node
+  - Full-screen red flash when activated
+  - Persistent countdown timer to July 12, 2025 at 17:00 UTC
+  - Countdown state preserved across page refreshes
 
 ## Development
 
@@ -31,6 +36,11 @@ This project visualizes blockchain wallet relationships between Fartcoin (💨) 
 ## Technical Notes
 
 - Built with Three.js for 3D rendering
-- Uses Parcel for bundling
+- Static site with ES modules (no bundler required)
 - Implements raycasting for hover interactions
 - Features both HTML and 3D tooltips for accessibility
+- Uses localStorage for persistent state management
+
+## Deployment
+
+This project is configured for deployment to Vercel as a static site. The main entry point is `public/index.html`.
